@@ -73,15 +73,20 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
           >
             Mobile Number
           </label>
-          <Input
-            id="phone"
-            type="tel"
-            inputMode="numeric"
-            placeholder="+91 00000 00000"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-            className="h-14 px-4 text-base bg-muted border-0 rounded-xl focus-visible:ring-1 focus-visible:ring-navy"
-          />
+          <div className="flex items-center gap-2">
+            <div className="flex items-center justify-center h-14 px-4 bg-muted rounded-xl text-sm font-semibold text-foreground border border-transparent">
+              +91
+            </div>
+            <Input
+              id="phone"
+              type="tel"
+              inputMode="numeric"
+              placeholder="00000 00000"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              className="flex-1 h-14 px-4 text-base bg-muted border-0 rounded-xl focus-visible:ring-1 focus-visible:ring-navy"
+            />
+          </div>
         </div>
 
         {/* Soft premium Login button matching greeting card aesthetic */}
