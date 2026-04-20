@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import Cropper from "react-easy-crop";
 import {
   X,
@@ -17,7 +17,7 @@ import type { Surface } from "@/lib/types";
 interface CameraCaptureScreenProps {
   surface: Surface;
   onBack: () => void;
-  onCapture: () => void;
+  onCapture: (photoSrcs: string[]) => void;
 }
 
 type Phase = "capture" | "crop" | "preview" | "analyzing";
@@ -94,6 +94,8 @@ export function CameraCaptureScreen({
 }: CameraCaptureScreenProps) {
   const [phase, setPhase] = useState<Phase>("capture");
   const [photos, setPhotos] = useState<Photo[]>([]);
+  const photosRef = useRef(photos);
+  photosRef.current = photos;
   const [analyzingStep, setAnalyzingStep] = useState(0);
   const [analyzeProgress, setAnalyzeProgress] = useState(0);
 
@@ -136,7 +138,7 @@ export function CameraCaptureScreen({
         if (prev >= 100) {
           clearInterval(progressInterval);
           clearInterval(stepInterval);
-          setTimeout(onCapture, 200);
+          setTimeout(() => onCapture(photosRef.current.map((p) => p.src)), 200);
           return 100;
         }
         return prev + 4;

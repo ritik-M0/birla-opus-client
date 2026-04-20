@@ -1,29 +1,55 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { MobileFrame } from "@/components/mobile-frame"
-import { LoadingScreen } from "@/components/screens/loading-screen"
-import { LoginScreen } from "@/components/screens/login-screen"
-import { HomeScreen } from "@/components/screens/home-screen"
-import { JobEntryScreen } from "@/components/screens/job-entry-screen"
-import { RoomSelectionScreen } from "@/components/screens/room-selection-screen"
-import { WallSelectionScreen } from "@/components/screens/wall-selection-screen"
-import { CameraCaptureScreen } from "@/components/screens/camera-capture-screen"
-import { MeasurementResultScreen } from "@/components/screens/measurement-result-screen"
-import { SummaryScreen } from "@/components/screens/summary-screen"
-import { SubmissionSuccessScreen } from "@/components/screens/submission-success-screen"
-import { HistoryScreen } from "@/components/screens/history-screen"
-import { MeasurementDetailsScreen } from "@/components/screens/measurement-details-screen"
-import type { Screen, Room, Surface, SurfaceMeasurement, Job } from "@/lib/types"
+import { useState, useEffect } from "react";
+import { MobileFrame } from "@/components/mobile-frame";
+import { LoadingScreen } from "@/components/screens/loading-screen";
+import { LoginScreen } from "@/components/screens/login-screen";
+import { HomeScreen } from "@/components/screens/home-screen";
+import { JobEntryScreen } from "@/components/screens/job-entry-screen";
+import { RoomSelectionScreen } from "@/components/screens/room-selection-screen";
+import { WallSelectionScreen } from "@/components/screens/wall-selection-screen";
+import { CameraCaptureScreen } from "@/components/screens/camera-capture-screen";
+import { MeasurementResultScreen } from "@/components/screens/measurement-result-screen";
+import { SummaryScreen } from "@/components/screens/summary-screen";
+import { SubmissionSuccessScreen } from "@/components/screens/submission-success-screen";
+import { HistoryScreen } from "@/components/screens/history-screen";
+import { MeasurementDetailsScreen } from "@/components/screens/measurement-details-screen";
+import type {
+  Screen,
+  Room,
+  Surface,
+  SurfaceMeasurement,
+  Job,
+} from "@/lib/types";
 
-type AppScreen = Screen | "loading"
+type AppScreen = Screen | "loading";
 
 const makeDefaultWalls = () => [
-  { id: 1, name: "Wall 1", type: "wall" as const, status: "not-started" as const },
-  { id: 2, name: "Wall 2", type: "wall" as const, status: "not-started" as const },
-  { id: 3, name: "Wall 3", type: "wall" as const, status: "not-started" as const },
-  { id: 4, name: "Wall 4", type: "wall" as const, status: "not-started" as const },
-]
+  {
+    id: 1,
+    name: "Wall 1",
+    type: "wall" as const,
+    status: "not-started" as const,
+  },
+  {
+    id: 2,
+    name: "Wall 2",
+    type: "wall" as const,
+    status: "not-started" as const,
+  },
+  {
+    id: 3,
+    name: "Wall 3",
+    type: "wall" as const,
+    status: "not-started" as const,
+  },
+  {
+    id: 4,
+    name: "Wall 4",
+    type: "wall" as const,
+    status: "not-started" as const,
+  },
+];
 
 const initialRooms: Room[] = [
   {
@@ -44,7 +70,7 @@ const initialRooms: Room[] = [
     walls: makeDefaultWalls(),
     ceiling: { id: 5, name: "Ceiling", type: "ceiling", status: "not-started" },
   },
-]
+];
 
 const sampleHistory: Job[] = [
   {
@@ -71,60 +97,68 @@ const sampleHistory: Job[] = [
     totalArea: 1750,
     rooms: [],
   },
-]
+];
 
 export default function BirlaOpusApp() {
-  const [screen, setScreen] = useState<AppScreen>("loading")
+  const [screen, setScreen] = useState<AppScreen>("loading");
 
   useEffect(() => {
-    const t = setTimeout(() => setScreen("login"), 2200)
-    return () => clearTimeout(t)
-  }, [])
+    const t = setTimeout(() => setScreen("login"), 2200);
+    return () => clearTimeout(t);
+  }, []);
 
-  const [leadId, setLeadId] = useState("")
-  const [rooms, setRooms] = useState<Room[]>(initialRooms)
-  const [selectedRoom, setSelectedRoom] = useState<Room | null>(null)
-  const [selectedSurface, setSelectedSurface] = useState<Surface | null>(null)
-  const [selectedJob, setSelectedJob] = useState<Job | null>(null)
+  const [leadId, setLeadId] = useState("");
+  const [rooms, setRooms] = useState<Room[]>(initialRooms);
+  const [selectedRoom, setSelectedRoom] = useState<Room | null>(null);
+  const [selectedSurface, setSelectedSurface] = useState<Surface | null>(null);
+  const [selectedJob, setSelectedJob] = useState<Job | null>(null);
+  const [capturedPhotos, setCapturedPhotos] = useState<string[]>([]);
 
-  const handleLogin = () => setScreen("home")
+  const handleLogin = () => setScreen("home");
 
-  const handleMeasureNew = () => setScreen("job-entry")
+  const handleMeasureNew = () => setScreen("job-entry");
 
-  const handleHistory = () => setScreen("history")
+  const handleHistory = () => setScreen("history");
 
   const handleStartJob = (id: string) => {
-    setLeadId(id)
-    setRooms(initialRooms)
-    setScreen("room-selection")
-  }
+    setLeadId(id);
+    setRooms(initialRooms);
+    setScreen("room-selection");
+  };
 
   const handleSelectRoom = (room: Room) => {
     // Always use the latest version of the room from state
-    const latest = rooms.find((r) => r.id === room.id) || room
-    setSelectedRoom(latest)
-    setScreen("wall-selection")
-  }
+    const latest = rooms.find((r) => r.id === room.id) || room;
+    setSelectedRoom(latest);
+    setScreen("wall-selection");
+  };
 
   const handleRoomChange = (updatedRoom: Room) => {
-    setRooms((prev) => prev.map((r) => r.id === updatedRoom.id ? updatedRoom : r))
-    setSelectedRoom(updatedRoom)
-  }
+    setRooms((prev) =>
+      prev.map((r) => (r.id === updatedRoom.id ? updatedRoom : r)),
+    );
+    setSelectedRoom(updatedRoom);
+  };
 
   const handleRenameRoom = (roomId: string, newName: string) => {
-    setRooms((prev) => prev.map((r) => r.id === roomId ? { ...r, name: newName } : r))
-  }
+    setRooms((prev) =>
+      prev.map((r) => (r.id === roomId ? { ...r, name: newName } : r)),
+    );
+  };
 
   const handleDeleteRoom = (roomId: string) => {
-    setRooms((prev) => prev.filter((r) => r.id !== roomId))
-  }
+    setRooms((prev) => prev.filter((r) => r.id !== roomId));
+  };
 
   const handleSelectWall = (surface: Surface) => {
-    setSelectedSurface(surface)
-    setScreen("camera-capture")
-  }
+    setSelectedSurface(surface);
+    setScreen("camera-capture");
+  };
 
-  const handleCapture = () => setScreen("measurement-result")
+  const handleCapture = (photos: string[]) => {
+    setCapturedPhotos(photos);
+    setScreen("measurement-result");
+  };
 
   const handleSaveSurface = (measurements: SurfaceMeasurement) => {
     if (selectedRoom && selectedSurface) {
@@ -137,12 +171,12 @@ export default function BirlaOpusApp() {
                   walls: room.walls.map((wall) =>
                     wall.id === selectedSurface.id
                       ? { ...wall, status: "completed" as const, measurements }
-                      : wall
+                      : wall,
                   ),
                 }
-              : room
-          )
-        )
+              : room,
+          ),
+        );
         setSelectedRoom((prev) =>
           prev
             ? {
@@ -150,64 +184,88 @@ export default function BirlaOpusApp() {
                 walls: prev.walls.map((wall) =>
                   wall.id === selectedSurface.id
                     ? { ...wall, status: "completed" as const, measurements }
-                    : wall
+                    : wall,
                 ),
               }
-            : null
-        )
+            : null,
+        );
       } else if (selectedSurface.type === "ceiling") {
         setRooms((prev) =>
           prev.map((room) =>
             room.id === selectedRoom.id && room.ceiling
-              ? { ...room, ceiling: { ...room.ceiling, status: "completed" as const, measurements } }
-              : room
-          )
-        )
+              ? {
+                  ...room,
+                  ceiling: {
+                    ...room.ceiling,
+                    status: "completed" as const,
+                    measurements,
+                  },
+                }
+              : room,
+          ),
+        );
         setSelectedRoom((prev) =>
           prev && prev.ceiling
-            ? { ...prev, ceiling: { ...prev.ceiling, status: "completed" as const, measurements } }
-            : prev
-        )
+            ? {
+                ...prev,
+                ceiling: {
+                  ...prev.ceiling,
+                  status: "completed" as const,
+                  measurements,
+                },
+              }
+            : prev,
+        );
       }
-      setScreen("wall-selection")
+      setScreen("wall-selection");
     }
-  }
+  };
 
   const handleAddRoom = (type: "interior" | "exterior") => {
     const newRoom: Room = {
       id: `room-${Date.now()}`,
       name: type === "exterior" ? "Exterior" : `Room ${rooms.length + 1}`,
       walls: makeDefaultWalls(),
-      ceiling: { id: 5, name: "Ceiling", type: "ceiling", status: "not-started" },
-    }
-    setRooms((prev) => [...prev, newRoom])
-  }
+      ceiling: {
+        id: 5,
+        name: "Ceiling",
+        type: "ceiling",
+        status: "not-started",
+      },
+    };
+    setRooms((prev) => [...prev, newRoom]);
+  };
 
-  const handleViewSummary = () => setScreen("summary")
+  const handleViewSummary = () => setScreen("summary");
 
   const handleSelectJobFromHistory = (job: Job) => {
-    setSelectedJob(job)
-    setScreen("measurement-details")
-  }
+    setSelectedJob(job);
+    setScreen("measurement-details");
+  };
 
-  const handleSubmit = () => setScreen("submission-success")
+  const handleSubmit = () => setScreen("submission-success");
 
   const handleGoHomeAfterSubmit = () => {
-    setRooms(initialRooms)
-    setLeadId("")
-    setScreen("home")
-  }
+    setRooms(initialRooms);
+    setLeadId("");
+    setScreen("home");
+  };
 
   const renderScreen = () => {
     switch (screen) {
       case "loading":
-        return <LoadingScreen />
+        return <LoadingScreen />;
 
       case "login":
-        return <LoginScreen onLogin={handleLogin} />
+        return <LoginScreen onLogin={handleLogin} />;
 
       case "home":
-        return <HomeScreen onMeasureNew={handleMeasureNew} onHistory={handleHistory} />
+        return (
+          <HomeScreen
+            onMeasureNew={handleMeasureNew}
+            onHistory={handleHistory}
+          />
+        );
 
       case "job-entry":
         return (
@@ -215,7 +273,7 @@ export default function BirlaOpusApp() {
             onBack={() => setScreen("home")}
             onNext={handleStartJob}
           />
-        )
+        );
 
       case "room-selection":
         return (
@@ -228,7 +286,7 @@ export default function BirlaOpusApp() {
             rooms={rooms}
             onViewSummary={handleViewSummary}
           />
-        )
+        );
 
       case "wall-selection":
         return selectedRoom ? (
@@ -239,7 +297,7 @@ export default function BirlaOpusApp() {
             onRoomChange={handleRoomChange}
             onProceed={() => setScreen("room-selection")}
           />
-        ) : null
+        ) : null;
 
       case "camera-capture":
         return selectedSurface ? (
@@ -248,16 +306,17 @@ export default function BirlaOpusApp() {
             onBack={() => setScreen("wall-selection")}
             onCapture={handleCapture}
           />
-        ) : null
+        ) : null;
 
       case "measurement-result":
         return selectedSurface ? (
           <MeasurementResultScreen
             surface={selectedSurface}
+            capturedPhotos={capturedPhotos}
             onBack={() => setScreen("camera-capture")}
             onSave={handleSaveSurface}
           />
-        ) : null
+        ) : null;
 
       case "summary":
         return (
@@ -268,7 +327,7 @@ export default function BirlaOpusApp() {
             onEdit={() => setScreen("room-selection")}
             onSubmit={handleSubmit}
           />
-        )
+        );
 
       case "submission-success":
         return (
@@ -277,7 +336,7 @@ export default function BirlaOpusApp() {
             onGoHome={handleGoHomeAfterSubmit}
             onViewMeasurement={() => setScreen("summary")}
           />
-        )
+        );
 
       case "history":
         return (
@@ -286,17 +345,20 @@ export default function BirlaOpusApp() {
             jobs={sampleHistory}
             onSelectJob={handleSelectJobFromHistory}
           />
-        )
+        );
 
       case "measurement-details":
         return selectedJob ? (
-          <MeasurementDetailsScreen job={selectedJob} onBack={() => setScreen("history")} />
-        ) : null
+          <MeasurementDetailsScreen
+            job={selectedJob}
+            onBack={() => setScreen("history")}
+          />
+        ) : null;
 
       default:
-        return null
+        return null;
     }
-  }
+  };
 
-  return <MobileFrame>{renderScreen()}</MobileFrame>
+  return <MobileFrame>{renderScreen()}</MobileFrame>;
 }
