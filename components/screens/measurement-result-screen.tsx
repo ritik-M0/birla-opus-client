@@ -14,14 +14,26 @@ interface MeasurementResultScreenProps {
   onSave: (measurements: SurfaceMeasurement) => void;
 }
 
-const defaultMeasurements: SurfaceMeasurement = {
+const defaultWallMeasurements: SurfaceMeasurement = {
   totalArea: 120,
   paintableArea: 96,
   nonPaintableArea: 14,
   blockedArea: 10,
   blockedObjects: [
     { id: "obj-1", name: "Sofa", area: 5, addedToPaintable: false },
-    { id: "obj-2", name: "TV Unit", area: 3, addedToPaintable: false },
+    { id: "obj-2", name: "Object 2", area: 3, addedToPaintable: false },
+    { id: "obj-3", name: "Object 3", area: 2, addedToPaintable: false },
+  ],
+};
+
+const defaultCeilingMeasurements: SurfaceMeasurement = {
+  totalArea: 120,
+  paintableArea: 96,
+  nonPaintableArea: 14,
+  blockedArea: 10,
+  blockedObjects: [
+    { id: "obj-1", name: "Chandelier", area: 5, addedToPaintable: false },
+    { id: "obj-2", name: "Object 2", area: 3, addedToPaintable: false },
     { id: "obj-3", name: "Object 3", area: 2, addedToPaintable: false },
   ],
 };
@@ -33,7 +45,10 @@ export function MeasurementResultScreen({
   onSave,
 }: MeasurementResultScreenProps) {
   const [measurements, setMeasurements] = useState<SurfaceMeasurement>(
-    surface.measurements || defaultMeasurements,
+    surface.measurements ||
+      (surface.type === "ceiling"
+        ? defaultCeilingMeasurements
+        : defaultWallMeasurements),
   );
   const [editingField, setEditingField] = useState<
     keyof SurfaceMeasurement | null
